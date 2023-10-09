@@ -1,6 +1,7 @@
-import React, { Component, useState } from 'react'
-import { Input, Menu } from 'semantic-ui-react'
-import { Button, Checkbox, Form } from 'semantic-ui-react'
+import React, { Component, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Input, Menu } from 'semantic-ui-react';
+import { Button, Checkbox, Form } from 'semantic-ui-react';
 import {URL, GENERAL_HEADERS} from '../constants';
 
 const LoginForm = () => {
@@ -8,8 +9,12 @@ const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const navigate = useNavigate();
+
     async function handleLogin () {
         try {
+            if (!validateForm()) return;
+            
             setError(null);
             const response = await fetch(`${URL}/api/login`, {
             method: 'POST',
@@ -21,11 +26,40 @@ const LoginForm = () => {
 
         });
         const data = await response.json();
-        console.log(response);
+
+        if (response.status >= 400) {
+          console.log('Invalid creds');
+          return;
+        }
+
+        console.log(data)
+
+        setUserData(data.token, data);
+
+        navigate('/');
 
         } catch (error) {
             setError('Connection error. Please, try again later.');
         }
+    }
+
+    function validateForm() {
+        if (email.length === 0) {
+            setError('Email is required');
+            return false;
+        }
+
+        if (password.length === 0) {
+            setError('Password is required');
+            return false;
+        }
+
+        return true;
+    }
+
+    function setUserData(token, user) {
+        window.localStorage.setItem('bearerToken', token);
+        window.localStorage.setItem('user', JSON.stringify(user));
     }
 
     return (
