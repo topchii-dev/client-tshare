@@ -12,13 +12,7 @@ const Home = () => {
 
     useEffect(() => {
         checkAuthorization();
-    }, []);
-
-    console.log(user);
-    useEffect(() => {
-        console.log(localStorage.getItem('user'));
-        console.log(localStorage.getItem('bearerToken'));
-    }, [user]);
+    }, [localStorage.getItem('user')]);
 
     return (
         <h3>Hello, {user == null ? 'guest' : user.username}</h3>

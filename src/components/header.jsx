@@ -15,7 +15,7 @@ const Header = () => {
 
     useEffect(() => {
       checkAuthorization();
-    }, []);
+    }, [localStorage.getItem('user')]);
 
     async function handleLogout() {
         try {
@@ -28,10 +28,17 @@ const Header = () => {
             },
         });
         const data = await response.json();
-        if (response.status >= 400) {
-          console.log('Invalid creds');
+
+        if (response.status >= 500) {
+          console.log('Server Error. Please, try again later.');
           return;
         }
+
+        if (response.status >= 400 && response.status < 500) {
+          console.log('Invalid credentials.');
+          return;
+        }
+
         console.log(data);
 
         localStorage.removeItem('bearerToken');
@@ -44,34 +51,55 @@ const Header = () => {
             console.log('Connection error. Please, try again later.');
         }
     }
-    
-    return (
-      <Menu>
-        <Link to="/">
-          <Menu.Item name='home'/>
-        </Link>
-  
-        <Menu.Menu position='right'>
-          {user == null && 
+
+    function buildHeaderColumns() {
+
+      /* Authenticated user view */
+      if (user !== null) {
+        return (
           <>
-          
-           <Link to="/register">
+            <Link to="/">
+              <Menu.Item name='home'/>
+            </Link>
+
+            <Link to={`/user/${user.username}`}>
+              <Menu.Item name={'My Profile'}/>
+            </Link>
+
+            <Menu.Menu position='right'>
+              <Menu.Item
+                name='logout'
+                onClick={handleLogout}
+              />
+            </Menu.Menu>
+          </>
+        )
+      } 
+      /* Guest view */
+      else {
+        return (
+          <>
+          <Link to="/">
+            <Menu.Item name='home'/>
+          </Link>
+
+          <Menu.Menu position='right'>
+            <Link to="/register">
               <Menu.Item name='register'/>
             </Link>
           
             <Link to="/login">
               <Menu.Item name='log in'/>
             </Link>
-
-          </>      
-          }
-          {user != null && 
-            <Menu.Item
-              name='logout'
-              onClick={handleLogout}
-            />
-          }
-        </Menu.Menu>
+          </Menu.Menu>
+        </>
+        )
+      }
+    }
+    
+    return (
+      <Menu>
+        {buildHeaderColumns()}
       </Menu>
     );
 }

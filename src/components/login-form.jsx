@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Input, Menu } from 'semantic-ui-react';
 import { Button, Checkbox, Form } from 'semantic-ui-react';
 import {URL, GENERAL_HEADERS} from '../constants';
+import '../css/forms.css';
 
 const LoginForm = () => {
     const [error, setError] = useState(null);
@@ -27,15 +28,17 @@ const LoginForm = () => {
         });
         const data = await response.json();
 
-        if (response.status >= 400) {
-          console.log('Invalid creds');
+        if (response.status >= 500) {
+          setError('Server Error. Please, try again later.');
           return;
         }
 
-        console.log(data)
+        if (response.status >= 400 && response.status < 500) {
+          setError('Invalid credentials.');
+          return;
+        }
 
         setUserData(data.token, data);
-
         navigate('/');
 
         } catch (error) {
@@ -63,28 +66,30 @@ const LoginForm = () => {
     }
 
     return (
-        <Form>
+        <Form className="auth-form">
             <Form.Field>
                 <label>Email</label>
                 <input 
-                  placeholder='Email'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                placeholder='Email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 />
             </Form.Field>
             <Form.Field>
                 <label>Password</label>
                 <input 
-                  placeholder='Password'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)} 
+                placeholder='Password'
+                value={password}
+                onChange={(e) => setPassword(e.target.value)} 
                 />
             </Form.Field>
             <Button type='submit' onClick={handleLogin}>Submit</Button>
 
-            {error !== null && <p>{error}</p>}
+            {error !== null && <p className='error-message'>{error}</p>}
         </Form>
     )
+
+
 }
 
 export default LoginForm;

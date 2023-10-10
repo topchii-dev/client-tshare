@@ -1,0 +1,32 @@
+.auth-form {
+  width: 300px;  /* Fixed width for better control */
+  margin: auto;
+  padding: 1em;  /* Reduced padding for a smaller gap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-form label {
+  text-align: center;  /* Center the text */
+  width: 100%;  /* Take full width */
+}
+
+.auth-form input {
+  width: 90%;  /* Slightly less than full width for a better fit */
+  padding: 10px;
+  margin: 8px 0;  /* Vertical margin only */
+  border: 1px solid #ccc;
+  border-radius: 4px;  /* Rounded input fields */
+}
+
+.auth-form .invalid-input {
+    border: 1px solid lightcoral !important;
+}
+
+.auth-form .error-message {
+    color: lightcoral;
+}
+
+
+
